@@ -683,7 +683,7 @@ const Home = (props: HomeProps) => {
                                             <MultiMintButton
                                                 candyMachine={candyMachine}
                                                 isMinting={isMinting}
-                                                isActive={isActive && isHolder}
+                                                isActive={isActive}
                                                 isEnded={isEnded}
                                                 isSoldOut={isSoldOut}
                                                 onMint={startMint}
