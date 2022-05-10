@@ -92,7 +92,7 @@ export const MultiMintButton = ({
     const [clicked, setClicked] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
     const [mintCount, setMintCount] = useState(1);
-    const [totalCost, setTotalCost] = useState(mintCount * (price + 0.012));
+    const [totalCost, setTotalCost] = useState(mintCount * (price));
 
     useEffect(() => {
         setIsVerifying(false);
@@ -146,7 +146,7 @@ export const MultiMintButton = ({
 
     function updateAmounts(qty: number) {
         setMintCount(qty);
-        setTotalCost(Math.round(qty * (price + 0.012) * 1000) / 1000);  // 0.012 = approx of account creation fees
+        setTotalCost(Math.round(qty * (price) * 1000) / 1000);  // 0.012 = approx of account creation fees
     }
 
 
@@ -236,7 +236,7 @@ export const MultiMintButton = ({
                 >+</Plus>
             </div>
             {!candyMachine?.state.isSoldOut && !isSoldOut && isActive &&
-              <h3>Total estimated cost (Solana fees included) : {totalCost} SOL</h3>}
+              <h3>Total estimated cost (Solana fees excluded) : {totalCost} TBF</h3>}
         </div>
     );
 };

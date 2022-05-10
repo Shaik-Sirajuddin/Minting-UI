@@ -168,7 +168,7 @@ export const getCandyMachineState = async (
 
   const idl = await anchor.Program.fetchIdl(CANDY_MACHINE_PROGRAM, provider);
 
-  const program = new anchor.Program(idl, CANDY_MACHINE_PROGRAM, provider);
+  const program = new anchor.Program(idl!, CANDY_MACHINE_PROGRAM, provider);
 
   const state: any = await program.account.candyMachine.fetch(candyMachineId);
   const itemsAvailable = state.data.itemsAvailable.toNumber();

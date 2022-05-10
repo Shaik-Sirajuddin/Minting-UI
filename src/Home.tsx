@@ -20,7 +20,9 @@ import {
     mintMultipleToken,
     CANDY_MACHINE_PROGRAM,
 } from "./candy-machine";
-
+//---- Start ----
+import holders from './utils/holder.json';
+//---- End ----
 const cluster = process.env.REACT_APP_SOLANA_NETWORK!.toString();
 const decimals = process.env.REACT_APP_SPL_TOKEN_TO_MINT_DECIMALS ? +process.env.REACT_APP_SPL_TOKEN_TO_MINT_DECIMALS!.toString() : 9;
 const splTokenName = process.env.REACT_APP_SPL_TOKEN_TO_MINT_NAME ? process.env.REACT_APP_SPL_TOKEN_TO_MINT_NAME.toString() : "TOKEN";
@@ -199,6 +201,7 @@ export interface HomeProps {
 }
 
 const Home = (props: HomeProps) => {
+    const [isHolder,setIsHolder] = useState(false);
     const [balance, setBalance] = useState<number>();
     const [isMinting, setIsMinting] = useState(false); // true when user got to press MINT
     const [isActive, setIsActive] = useState(false); // true when countdown completes or whitelisted
@@ -224,7 +227,7 @@ const Home = (props: HomeProps) => {
         message: "",
         severity: undefined,
     });
-
+    
     const wallet = useAnchorWallet();
     const [candyMachine, setCandyMachine] = useState<CandyMachine>();
 
@@ -337,7 +340,7 @@ const Home = (props: HomeProps) => {
             }
         })();
     };
-
+    
     const renderGoLiveDateCounter = ({days, hours, minutes, seconds}: any) => {
         return (
             <div><Card elevation={1}><h1>{days}</h1>Days</Card><Card elevation={1}><h1>{hours}</h1>
@@ -444,7 +447,7 @@ const Home = (props: HomeProps) => {
                     LAMPORTS_PER_SOL;
 
 
-                while (newBalance > futureBalance && retry < 20) {
+                while (newBalance > futureBalance && retry < 2) {
                     await sleep(2000);
                     newBalance =
                         (await props.connection.getBalance(wallet.publicKey)) /
@@ -556,7 +559,16 @@ const Home = (props: HomeProps) => {
             setIsMinting(false);
         }
     };
-
+    const checkHolder =()=>{
+        let walletAddress = wallet?.publicKey.toString()
+        if(!walletAddress || !holders.includes(walletAddress)){
+           setIsHolder(false)
+        }
+        else{
+            setIsHolder(true)
+        }
+        
+    }
     useEffect(() => {
         (async () => {
             if (wallet) {
@@ -566,7 +578,10 @@ const Home = (props: HomeProps) => {
         })();
     }, [wallet, props.connection]);
 
-    useEffect(refreshCandyMachineState, [
+    useEffect(()=>{
+        refreshCandyMachineState()
+        checkHolder()
+    }, [
         wallet,
         props.candyMachineId,
         props.connection,
@@ -653,6 +668,7 @@ const Home = (props: HomeProps) => {
                                                     isEnded={isEnded}
                                                     isSoldOut={isSoldOut}
                                                     onMint={startMint}
+                                                    
                                                 />
                                             </GatewayProvider>
                                         ) : (
@@ -667,7 +683,7 @@ const Home = (props: HomeProps) => {
                                             <MultiMintButton
                                                 candyMachine={candyMachine}
                                                 isMinting={isMinting}
-                                                isActive={isActive}
+                                                isActive={isActive && isHolder}
                                                 isEnded={isEnded}
                                                 isSoldOut={isSoldOut}
                                                 onMint={startMint}
